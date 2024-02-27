@@ -1,64 +1,95 @@
 import random
-# "ID" and "ER" are individual parameters 
+import time
+import openpyxl
 
-L=[]
+start=time.time()
+excel_file_path = 'HERE THE PATH'
+
+L = []
 for k in range(24):
     L.append([])
-    
 
+workbook = openpyxl.load_workbook(excel_file_path)
+sheet = workbook.active
 
-for j in range(24):
-    for k in range(int(random.random()*100)):
-        L[j].append(["ID","ER",j,0]) 
+for row in sheet.iter_rows(min_row=2, values_only=True):
+    row_data = [int(row[0]), int(row[1]), int(row[2]), 0]
+    L[int(row[2])].append(row_data)
 
-print(L)
+print("File imported")
 
 def maxx(L):
     maxL=len(L[0])
+    kf=0
     for k in range(len(L)):
         if len(L[k])>maxL:
             maxL=len(L[k])
-    return maxL
+            kf=k
+    return [maxL,k]
 
 def minn(L):
     minL=len(L[0])
+    kf=0
     for k in range(len(L)):
         if len(L[k])<minL:
             minL=len(L[k])
-    return minL
+            kf=0
+    return [minL,0]
 
 mean=0
 for p in range(24):
     mean+=len(L[p])
 mean=mean/24
 
-while minn(L) < 0.8 * maxx(L):
-    remmm = random.randint(0, len(L) - 1)
-    
-    if len(L[remmm]) > mean and random.random()<(maxx(L)-len(L[remmm]))/(maxx(L)-mean):
-        if random.random() < 0.5:
-            choice = random.choice(L[remmm])
+for k in range(len(L)):
+    print(len(L[k]))
+
+while minn(L)[0] < 0.6 * maxx(L)[0]:  
+    maxxxL=maxx(L)[1]
+    minnnL=minn(L)[1]
+
+    if len(L[(maxxxL-1)%24])<len(L[(maxxxL+1)%24]):
+        if len(L[maxxxL])>100:
+            choices = random.sample(L[maxxxL], 100)
+        else: 
+            choices=L[maxxxL]
+        for choice in choices:
             if random.random()<0.2+1/(choice[3]+1):
                 choice[3]+=1
-                L[(remmm - 1) % 24].append(choice)
-                L[remmm].remove(choice)
-            
-        else:
-            choice = random.choice(L[remmm])
-            if random.random()<0.2+1/(choice[3]+1):
-                choice[3]+=1
-                L[(remmm + 1) % 24].append(choice)
-                L[remmm].remove(choice)
+                L[(maxxxL - 1) % 24].append(choice)
+                L[maxxxL].remove(choice)
         
+    else:
+        if len(L[maxxxL])>100:
+            choices = random.sample(L[maxxxL], 100)
+        else: 
+            choices=L[maxxxL]
+        for choice in choices:
+            if random.random()<0.2+1/(choice[3]+1):
+                choice[3]+=1
+                L[(maxxxL + 1) % 24].append(choice)
+                L[maxxxL].remove(choice)
 
-    if len(L[remmm]) < mean and random.random()>(len(L[remmm])-minn(L))/(mean-minn(L)):
-        if random.random() < 0.5:
-            adjacent_index = (remmm - 1) % 24
-        else:
-            adjacent_index = (remmm + 1) % 24
 
-        if L[adjacent_index]:
-            choice = random.choice(L[adjacent_index])
-            choice[3]+=1
-            L[remmm].append(choice)
-            L[adjacent_index].remove(choice)
+    if len(L[(minnnL-1)%24])<len(L[(minnnL+1)%24]):
+        if len(L[(minnnL+1)%24])>100:
+            choices = random.sample(L[(minnnL+1)%24], 100)
+        else: 
+            choices=L[(minnnL+1)%24]
+        for choice in choices:
+            if random.random()<0.2+1/(choice[3]+1):
+                choice[3]+=1
+                L[minnnL].append(choice)
+                L[(minnnL+1)%24].remove(choice)
+        
+    else:
+        if len(L[(minnnL-1)%24])>100:
+            choices = random.sample(L[(minnnL-1)%24], 100)
+        else: 
+            choices=L[(minnnL-1)%24]
+        for choice in choices:
+            if random.random()<0.2+1/(choice[3]+1):
+                choice[3]+=1
+                L[minnnL].append(choice)
+                L[(minnnL-1)%24].remove(choice)
+                   
