@@ -1,0 +1,64 @@
+import random
+# "ID" and "ER" are individual parameters 
+
+L=[]
+for k in range(24):
+    L.append([])
+    
+
+
+for j in range(24):
+    for k in range(int(random.random()*100)):
+        L[j].append(["ID","ER",j,0]) # keep track which hour, deux solutions: soit on garde trace how many displacements done already, soit on fait un sysème de proba 1/2 depuis le max
+
+print(L)
+
+def maxx(L):
+    maxL=len(L[0])
+    for k in range(len(L)):
+        if len(L[k])>maxL:
+            maxL=len(L[k])
+    return maxL
+
+def minn(L):
+    minL=len(L[0])
+    for k in range(len(L)):
+        if len(L[k])<minL:
+            minL=len(L[k])
+    return minL
+
+mean=0
+for p in range(24):
+    mean+=len(L[p])
+mean=mean/24
+
+while minn(L) < 0.8 * maxx(L):  # Replace minn() and maxx() with your actual functions
+    remmm = random.randint(0, len(L) - 1)
+    
+    if len(L[remmm]) > mean and random.random()<(maxx(L)-len(L[remmm]))/(maxx(L)-mean): # Proportional to distance to mean !
+        if random.random() < 0.5:
+            choice = random.choice(L[remmm])#  inversely proportional to track change !
+            if random.random()<0.2+1/(choice[3]+1):
+                choice[3]+=1
+                L[(remmm - 1) % 24].append(choice)
+                L[remmm].remove(choice)
+            
+        else:
+            choice = random.choice(L[remmm])
+            if random.random()<0.2+1/(choice[3]+1):
+                choice[3]+=1
+                L[(remmm + 1) % 24].append(choice)
+                L[remmm].remove(choice)
+        
+
+    if len(L[remmm]) < mean and random.random()>(len(L[remmm])-minn(L))/(mean-minn(L)):
+        if random.random() < 0.5:
+            adjacent_index = (remmm - 1) % 24
+        else:
+            adjacent_index = (remmm + 1) % 24
+
+        if L[adjacent_index]:
+            choice = random.choice(L[adjacent_index])
+            choice[3]+=1
+            L[remmm].append(choice)
+            L[adjacent_index].remove(choice)
