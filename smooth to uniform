@@ -9,7 +9,7 @@ for k in range(24):
 
 for j in range(24):
     for k in range(int(random.random()*100)):
-        L[j].append(["ID","ER",j,0]) # keep track which hour, deux solutions: soit on garde trace how many displacements done already, soit on fait un sysème de proba 1/2 depuis le max
+        L[j].append(["ID","ER",j,0]) 
 
 print(L)
 
@@ -32,12 +32,12 @@ for p in range(24):
     mean+=len(L[p])
 mean=mean/24
 
-while minn(L) < 0.8 * maxx(L):  # Replace minn() and maxx() with your actual functions
+while minn(L) < 0.8 * maxx(L):
     remmm = random.randint(0, len(L) - 1)
     
-    if len(L[remmm]) > mean and random.random()<(maxx(L)-len(L[remmm]))/(maxx(L)-mean): # Proportional to distance to mean !
+    if len(L[remmm]) > mean and random.random()<(maxx(L)-len(L[remmm]))/(maxx(L)-mean):
         if random.random() < 0.5:
-            choice = random.choice(L[remmm])#  inversely proportional to track change !
+            choice = random.choice(L[remmm])
             if random.random()<0.2+1/(choice[3]+1):
                 choice[3]+=1
                 L[(remmm - 1) % 24].append(choice)
