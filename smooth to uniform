@@ -14,7 +14,6 @@ workbook = openpyxl.load_workbook(excel_file_path)
 sheet = workbook.active
 
 for row in sheet.iter_rows(min_row=2, values_only=True):
-    # Convert values to the desired data types if needed
     row_data = [int(row[0]), int(row[1]), int(row[2]), 0]
     L[int(row[2])].append(row_data)
 
