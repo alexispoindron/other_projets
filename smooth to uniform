@@ -3,7 +3,6 @@ import openpyxl
 
 excel_file_path = 'HERE THE PATH'
 
-
 L = []
 for k in range(24):
     L.append([])
@@ -17,21 +16,46 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     L[int(row[2])].append(row_data)
 
 
-def maxx(L):
-    maxL=len(L[0])
+
+inter=time.time()
+
+print("File imported in ", inter-start, " seconds")
+
+
+batch1=10
+batch2=5
+batch3=30
+
+BIGL=[]
+for k in range(batch3):
+    BIGL.append([])
+for k in range(batch3):
+    for r in range(24):
+        BIGL[k].append([])
+
+for k in range(batch3):
+    for p in range(24):
+        for q in range(len(L[p])):
+            if q%batch3==k:
+                BIGL[k][p].append(L[p][q])
+
+start=time.time()
+
+def maxx(LLL):
+    maxL=len(LLL[0])
     kf=0
-    for k in range(len(L)):
-        if len(L[k])>maxL:
-            maxL=len(L[k])
+    for k in range(len(LLL)):
+        if len(LLL[k])>maxL:
+            maxL=len(LLL[k])
             kf=k
     return [maxL,kf]
 
-def minn(L):
-    minL=len(L[0])
+def minn(LLL):
+    minL=len(LLL[0])
     kf=0
-    for k in range(len(L)):
-        if len(L[k])<minL:
-            minL=len(L[k])
+    for k in range(len(LLL)):
+        if len(LLL[k])<minL:
+            minL=len(LLL[k])
             kf=k
     return [minL,kf]
 
@@ -43,52 +67,78 @@ mean=mean/24
 for k in range(len(L)):
     print(len(L[k]))
 
-while minn(L)[0] < 0.6 * maxx(L)[0]:  # Replace minn() and maxx() with your actual functions  
-    maxxxL=maxx(L)[1]
-    minnnL=minn(L)[1]
 
-    if len(L[(maxxxL-1)%24])<len(L[(maxxxL+1)%24]):
-        if len(L[maxxxL])>100:
-            choices = random.sample(L[maxxxL], 100)#  inversely proportional to track change !
-        else: 
-            choices=L[maxxxL]
-        for choice in choices:
-            if random.random()<0.2+1/(choice[3]+1):
-                choice[3]+=1
-                L[(maxxxL - 1) % 24].append(choice)
-                L[maxxxL].remove(choice)
-        
-    else:
-        if len(L[maxxxL])>100:
-            choices = random.sample(L[maxxxL], 100)#  inversely proportional to track change !
-        else: 
-            choices=L[maxxxL]
-        for choice in choices:
-            if random.random()<0.2+1/(choice[3]+1):
-                choice[3]+=1
-                L[(maxxxL + 1) % 24].append(choice)
-                L[maxxxL].remove(choice)
+for ba in range(batch3):
+    while minn(BIGL[ba])[0] < 0.9 * maxx(BIGL[ba])[0]:
+        maxxxL=maxx(BIGL[ba])[1]
+        minnnL=minn(BIGL[ba])[1]
+
+        for k in range(batch1):
+            if len(BIGL[ba][(maxxxL-1)%24])<len(BIGL[ba][(maxxxL+1)%24]):
+                if len(BIGL[ba][maxxxL])>batch2:
+                    choices = random.sample(BIGL[ba][maxxxL], batch2)
+                else: 
+                    choices=BIGL[ba][maxxxL]
+                for choice in choices:
+                    if random.random()<0.3+1/(choice[3]+1):
+                        choice[3]+=1
+                        BIGL[ba][(maxxxL - 1) % 24].append(choice)
+                        BIGL[ba][maxxxL].remove(choice)
+                
+            else:
+                if len(BIGL[ba][maxxxL])>batch2:
+                    choices = random.sample(BIGL[ba][maxxxL], batch2)
+                else: 
+                    choices=BIGL[ba][maxxxL]
+                for choice in choices:
+                    if random.random()<0.3+1/(choice[3]+1):
+                        choice[3]+=1
+                        BIGL[ba][(maxxxL + 1) % 24].append(choice)
+                        BIGL[ba][maxxxL].remove(choice)
 
 
-    if len(L[(minnnL-1)%24])<len(L[(minnnL+1)%24]):
-        if len(L[(minnnL+1)%24])>100:
-            choices = random.sample(L[(minnnL+1)%24], 100)#  inversely proportional to track change !
-        else: 
-            choices=L[(minnnL+1)%24]
-        for choice in choices:
-            if random.random()<0.2+1/(choice[3]+1):
-                choice[3]+=1
-                L[minnnL].append(choice)
-                L[(minnnL+1)%24].remove(choice)
-        
-    else:
-        if len(L[(minnnL-1)%24])>100:
-            choices = random.sample(L[(minnnL-1)%24], 100)#  inversely proportional to track change !
-        else: 
-            choices=L[(minnnL-1)%24]
-        for choice in choices:
-            if random.random()<0.2+1/(choice[3]+1):
-                choice[3]+=1
+            if len(BIGL[ba][(minnnL-1)%24])<len(BIGL[ba][(minnnL+1)%24]):
+                if len(BIGL[ba][(minnnL+1)%24])>batch2:
+                    choices = random.sample(BIGL[ba][(minnnL+1)%24], batch2)
+                else: 
+                    choices=BIGL[ba][(minnnL+1)%24]
+                for choice in choices:
+                    if random.random()<0.2+1/(choice[3]+1):
+                        choice[3]+=1
+                        BIGL[ba][minnnL].append(choice)
+                        BIGL[ba][(minnnL+1)%24].remove(choice)
+                
+            else:
+                if len(BIGL[ba][(minnnL-1)%24])>batch2:
+                    choices = random.sample(BIGL[ba][(minnnL-1)%24], batch2)
+                else: 
+                    choices=BIGL[ba][(minnnL-1)%24]
+                for choice in choices:
+                    if random.random()<0.2+1/(choice[3]+1):
+                        choice[3]+=1
+                        BIGL[ba][minnnL].append(choice)
+                        BIGL[ba][(minnnL-1)%24].remove(choice)
+                    
+
+             
+
+final_list=[]
+for k in range(24):
+    final_list.append([])
+
+for k in range(24):
+    for p in range(batch3):
+        final_list[k].append(BIGL[p][k])
+
+
+
+print("successful")
+
+end=time.time()
+print("program exectution in =",end-start," seconds")
+            
+            
+  
                 L[minnnL].append(choice)
                 L[(minnnL-1)%24].remove(choice)
             
