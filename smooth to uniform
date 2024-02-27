@@ -1,6 +1,9 @@
 import random
 import openpyxl
 
+batch1=10
+batch2=5
+batch3=30
 excel_file_path = 'HERE THE PATH'
 
 L = []
@@ -16,16 +19,6 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     L[int(row[2])].append(row_data)
 
 
-
-inter=time.time()
-
-print("File imported in ", inter-start, " seconds")
-
-
-batch1=10
-batch2=5
-batch3=30
-
 BIGL=[]
 for k in range(batch3):
     BIGL.append([])
@@ -38,8 +31,6 @@ for k in range(batch3):
         for q in range(len(L[p])):
             if q%batch3==k:
                 BIGL[k][p].append(L[p][q])
-
-start=time.time()
 
 def maxx(LLL):
     maxL=len(LLL[0])
@@ -66,7 +57,6 @@ mean=mean/24
 
 for k in range(len(L)):
     print(len(L[k]))
-
 
 for ba in range(batch3):
     while minn(BIGL[ba])[0] < 0.9 * maxx(BIGL[ba])[0]:
@@ -118,10 +108,7 @@ for ba in range(batch3):
                         choice[3]+=1
                         BIGL[ba][minnnL].append(choice)
                         BIGL[ba][(minnnL-1)%24].remove(choice)
-                    
-
-             
-
+                     
 final_list=[]
 for k in range(24):
     final_list.append([])
@@ -131,13 +118,6 @@ for k in range(24):
         final_list[k].append(BIGL[p][k])
 
 
-
-print("successful")
-
-end=time.time()
-print("program exectution in =",end-start," seconds")
-            
-            
   
                 L[minnnL].append(choice)
                 L[(minnnL-1)%24].remove(choice)
