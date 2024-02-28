@@ -111,7 +111,8 @@ for k in range(24):
 
 for k in range(24):
     for p in range(batch3):
-        final_list[k].append(BIGL[p][k])
+        for j in BIGL[p][k]:
+            final_list[k].append(j)
 
 
   
